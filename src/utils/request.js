@@ -1,4 +1,5 @@
 import axios from 'axios'
+import store from '@/store'
 // 导入element-ul 中的提示错误对象
 import { Message } from 'element-ui'
 const service = axios.create({
@@ -6,7 +7,17 @@ const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, //设置axios请求的基础地址
   timeout: 5000 //设置超时时间
 })
-service.interceptors.request.use()
+// 请求拦截器
+service.interceptors.request.use(config => {
+  // config 是请求的配置信息
+  // 注入 token
+  if (store.getters.token) {
+    config.headers['Authorization'] = `Bearer ${store.getters.token}`
+  }
+  return config  // 必须要返回config
+}, error => {
+  return Promise.reject(error)
+})
 // 响应拦截器
 service.interceptors.response.use(response => {
   // axios 默认添加了层data
