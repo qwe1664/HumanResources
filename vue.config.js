@@ -36,7 +36,17 @@ module.exports = {
       warnings: false,
       errors: true,
     },
-    // before: require('./mock/mock-server.js')
+    // before: require('./mock/mock-server.js')  会导致代理服务的异常
+    // 配置反向代理
+    proxy: {
+      // 当地址中有/api 的时候会触发代理机制
+      '/api': {
+        target: 'http://localhost:3000', // 要代理的服务器地址 这里不用写 api
+        changeOrigin: true  // 是否跨域
+        // 重写路径
+        // pathRewrite: {}
+      }
+    }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
