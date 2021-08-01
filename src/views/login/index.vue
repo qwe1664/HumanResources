@@ -68,6 +68,8 @@
 
 <script>
 import { validMobile } from "@/utils/validate";
+// 引入 vuex中 向外暴露的token
+import { mapActions } from "vuex";
 
 export default {
   name: "Login",
@@ -107,7 +109,7 @@ export default {
         ],
         password: [
           { required: true, trigger: "blur", message: "密码不能为空" },
-          { min: 6, max: 16, trigger: "blur", message: "密码为6-16位数"  }
+          { min: 6, max: 16, trigger: "blur", message: "密码为6-16位数" }
         ]
       },
       loading: false,
@@ -124,6 +126,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["user/login"]), // 引入方法
     showPwd() {
       if (this.passwordType === "password") {
         this.passwordType = "";
@@ -135,21 +138,25 @@ export default {
       });
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true;
-          this.$store
-            .dispatch("user/login", this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || "/" });
-              this.loading = false;
-            })
-            .catch(() => {
-              this.loading = false;
-            });
-        } else {
-          console.log("error submit!!");
-          return false;
+      // 表单的手动校验
+      // ref 可以获取一个元素的dom对象
+      // ref作用到组件上的时候，可以获取该组件的实例 this
+      this.$refs.loginForm.validate(async isOK => {
+        if (isOK) {
+          try {
+            this.loading = true;
+            // 只有校验通过了我们才去调用action
+            await this["user/login"](this.loginForm);
+            // 应该是登录成功之后
+            // async 标记的函数实际上是一个promise对象
+            // await 下面的代码 都是成功执行的代码，执行完了跳转到首页
+            this.$router.push("/");
+          } catch (error) {
+            console.log(error);
+          } finally {
+            // 不论执行 try 还是 catch 都会进入finally 关闭转圈
+            this.loading = false;
+          }
         }
       });
     }
