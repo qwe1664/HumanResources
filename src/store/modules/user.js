@@ -1,7 +1,7 @@
 // 导入对token的存，取和删除方法
 import { getToken, setToken, removeToken } from '@/utils/auth'
 // 导入登录的login 接口
-import { login, getUserInfo } from '@/api/user'
+import { login, getUserInfo, getUserDetailById } from '@/api/user'
 const state = {
   token: getToken(), // 设置token为共享状态，初始化vuex的时候，就要先从缓存中获取
   userInfo: {} // 这里定义一个空对象
@@ -34,9 +34,11 @@ const actions = {
     // 如果为true，表示登录成功
     context.commit('setToken', result) // 设置token
   },
-  async getUserInfo() {
+  async getUserInfo(context) {
     const result = await getUserInfo() // 提交到mutaions 里面
-    context.commit('setUserInfo', result)
+    // 获取用户的详情 用户的详情数据，获取到图像 对数据进行拼接
+    const baseInfo = await getUserDetailById(result.userId)
+    context.commit('setUserInfo', { ...result, ...baseInfo })
     return result // 这里给我们后期做权限的时候 留下一个伏笔
   }
 }
