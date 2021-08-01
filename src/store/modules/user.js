@@ -19,12 +19,10 @@ const mutations = {
 const actions = {
   async login(context, data) {
     // 调用api接口
-    const result = await login(data)
-    // axios 默认添加了一层data
-    if (result.data.success) {
-      // 如果为true，表示登录成功
-      context.commit('setToken', result.data.data)
-    }
+    const result = await login(data) // 拿到token
+    // axios 默认添加了一层data,在响应拦截器中已经将外层data去除了
+    // 如果为true，表示登录成功
+    context.commit('setToken', result) // 设置token
   }
 }
 export default {
