@@ -40,6 +40,12 @@ const actions = {
     const baseInfo = await getUserDetailById(result.userId)
     context.commit('setUserInfo', { ...result, ...baseInfo })
     return result // 这里给我们后期做权限的时候 留下一个伏笔
+  },
+  logout(context) {
+    // 删除token
+    context.commit('removeToken')
+    // 删除用户资料
+    context.commit('reomveUserInfo')
   }
 }
 export default {
