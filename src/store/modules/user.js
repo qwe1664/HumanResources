@@ -1,5 +1,5 @@
 // 导入对token的存，取和删除方法
-import { getToken, setToken, removeToken } from '@/utils/auth'
+import { getToken, setToken, removeToken, setTimeStamp } from '@/utils/auth'
 // 导入登录的login 接口
 import { login, getUserInfo, getUserDetailById } from '@/api/user'
 const state = {
@@ -33,6 +33,8 @@ const actions = {
     // axios 默认添加了一层data,在响应拦截器中已经将外层data去除了
     // 如果为true，表示登录成功
     context.commit('setToken', result) // 设置token
+
+    setTimeStamp()  // 设置当前时间戳
   },
   async getUserInfo(context) {
     const result = await getUserInfo() // 提交到mutaions 里面

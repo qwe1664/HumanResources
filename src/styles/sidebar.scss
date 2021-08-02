@@ -10,7 +10,9 @@
   .sidebar-container {
     transition: width 0.28s;
     width: $sideBarWidth !important;
-    background: -webkit-linear-gradient(bottom, #3d6df8, #5b8cff);
+    // background: -webkit-linear-gradient(bottom, #3d6df8, #5b8cff);
+    background: url('~@/assets/1.png');
+    background-size: cover;
     height: 100%;
     position: fixed;
     font-size: 0px;
@@ -27,7 +29,8 @@
 
     .scrollbar-wrapper {
       overflow-x: hidden !important;
-      background: url('~@/assets/common/leftnavBg.png') no-repeat 0 100%;
+      // background: url('~@/assets/common/leftnavBg.png') no-repeat 0 100%;
+      
     }
 
     .el-scrollbar__bar.is-vertical {
@@ -67,24 +70,29 @@
       border: none;
       height: 100%;
       width: 100% !important;
-      a{
-        li{
-          .svg-icon{
+
+      a {
+        li {
+          .svg-icon {
             color: #fff;
             font-size: 18px;
             vertical-align: middle;
-            .icon{
-              color:#fff;
+
+            .icon {
+              color: #fff;
             }
           }
-          span{
+
+          span {
             color: #fff;
           }
-          &:hover{
-            .svg-icon{
+
+          &:hover {
+            .svg-icon {
               color: #43a7fe
             }
-            span{
+
+            span {
               color: #43a7fe;
             }
           }
@@ -215,6 +223,7 @@
     .svg-icon {
       margin-right: 16px;
     }
+
     .sub-el-icon {
       margin-right: 12px;
       margin-left: -2px;
