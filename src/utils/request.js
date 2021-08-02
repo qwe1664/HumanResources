@@ -44,7 +44,14 @@ service.interceptors.response.use(response => {
     return Promise.reject(new Error(message))
   }
 }, error => {
-  Message.error(error.message) // 提示错误信息
+  // error 信息 里面 response的对象
+  if (error.response && error.response.data && error.response.data.code === 10002) {
+    // 当data中返回的code的值 等于 10002时表示 后端告诉我们 token超时了
+    store.dispatch('user/logout') // 登出操作  删除 token
+    router.push('/login') // 跳转到登录页面
+  } else {
+    Message.error(error.message) // 提示错误信息
+  }
   return Promise.reject(error) // 返回执行错误，让当前的执行链跳出成功，进入catch
 })
 function IsCheckTimeOut() {
