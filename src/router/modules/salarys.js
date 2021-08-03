@@ -11,7 +11,8 @@ export default {
     component: () => import('@/views/salarys'),
     // 路由元信息 就是存储数据的地方 可以放任何内容
     meta: {
-      title: '工资' // 因为左侧导航读取了这里的title属性 ，根据遍历这个属性来循环左侧导航
+      title: '工资', // 因为左侧导航读取了这里的title属性 ，根据遍历这个属性来循环左侧导航
+      icon: 'money'
     }
   }]
 }
