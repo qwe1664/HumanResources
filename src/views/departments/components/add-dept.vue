@@ -9,7 +9,19 @@
         <el-input v-model="formData.code" placeholder="1-50个字符" style="width:80%;"></el-input>
       </el-form-item>
       <el-form-item label="部门负责人" prop="manager">
-        <el-select v-model="formData.manager" placeholder="请选择" style="width:80%;"></el-select>
+        <el-select
+          @focus="getEmployessSimple"
+          v-model="formData.manager"
+          placeholder="请选择"
+          style="width:80%;"
+        >
+          <el-option
+            v-for="item in peoples"
+            :key="item.id"
+            :label="item.username"
+            :value="item.username"
+          ></el-option>
+        </el-select>
       </el-form-item>
       <el-form-item label="部门介绍" prop="introduce">
         <el-input
@@ -34,6 +46,8 @@
 
 <script>
 import { getDepartments } from "@/api/departments";
+// 导入获取用户简单数据 接口
+import { getEmployessSimple } from "@/api/employees";
 export default {
   props: {
     showDialog: {
@@ -103,8 +117,14 @@ export default {
             trigger: "blur"
           }
         ]
-      } // 校验规则
+      }, // 校验规则
+      peoples: [] // 接收获取的员工简单列表的数据
     };
+  },
+  methods: {
+    async getEmployessSimple() {
+      this.peoples = await getEmployessSimple();
+    }
   }
 };
 </script>
