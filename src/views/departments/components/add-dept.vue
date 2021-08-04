@@ -1,7 +1,7 @@
 <template>
   <!-- 放置弹层组件 -->
-  <el-dialog title="新增部门" :visible="showDialog">
-    <el-form label-width="120px" :model="formData" :rules="rules">
+  <el-dialog title="新增部门" :visible="showDialog" @close="btnCancel">
+    <el-form ref="deptForm" label-width="120px" :model="formData" :rules="rules">
       <el-form-item label="部门名称" prop="name">
         <el-input v-model="formData.name" placeholder="1-50个字符" style="width:80%;"></el-input>
       </el-form-item>
@@ -37,15 +37,15 @@
     <el-row slot="footer" type="flex" justify="center">
       <!-- 列被分为24 -->
       <el-col :span="6">
-        <el-button type="primary" size="small">确定</el-button>
-        <el-button size="small">取消</el-button>
+        <el-button @click="btnOK" type="primary" size="small">确定</el-button>
+        <el-button size="small" @click="btnCancel">取消</el-button>
       </el-col>
     </el-row>
   </el-dialog>
 </template>
 
 <script>
-import { getDepartments } from "@/api/departments";
+import { getDepartments, addDepartments } from "@/api/departments";
 // 导入获取用户简单数据 接口
 import { getEmployessSimple } from "@/api/employees";
 export default {
@@ -124,6 +124,30 @@ export default {
   methods: {
     async getEmployessSimple() {
       this.peoples = await getEmployessSimple();
+    },
+    // 点击确定按钮,把表单中的值添加进后台数据，并且通知父组件重新获取数据更新视图
+    btnOK() {
+      this.$refs.deptForm.validate(async isOK => {
+        if (isOK) {
+          // 表单验证通过
+          // 表示添加进来的数据中的pid 为我所点击元素的里面的id
+          await addDepartments({ ...this.formData, pid: this.treeNode.id });
+          // 通知父组件重新拉取数据
+          this.$emit("addDepts");
+          // 此时应该去修改showDialog的值,利用update跟上本页面需要修改的值，后面跟上一个修改为的值，父组件通过.sync进行接收
+          // update:props名称
+          this.$emit("update:showDialog", false);
+          // 关闭dialog的时候会 触发 el-dialog的close 事件
+          // 所以这里不需要再单独的重置数据了
+        }
+      });
+    },
+    // 点击取消按钮，关闭弹层，并且关闭表单验证
+    btnCancel() {
+      // 关闭弹层
+      this.$emit("update:showDialog", false);
+      // 清除之前的校验
+      this.$refs.deptForm.resetFields();
     }
   }
 };

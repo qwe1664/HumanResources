@@ -19,7 +19,7 @@
       </el-card>
     </div>
     <!-- 防止新增弹层组件 -->
-    <AddDept :showDialog="showDialog" :treeNode="node"></AddDept>
+    <AddDept @addDepts="getDepartments" :showDialog.sync="showDialog" :treeNode="node"></AddDept>
   </div>
 </template>
 
