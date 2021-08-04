@@ -9,7 +9,7 @@
     <el-col :span="4">
       <el-row type="flex" justify="end">
         <!-- 两个内容 分为左边和右边 -->
-        <el-col>{{treeNode.message}}</el-col>
+        <el-col>{{treeNode.manager}}</el-col>
         <el-col>
           <!-- 防止下拉菜单 element -->
           <el-dropdown>

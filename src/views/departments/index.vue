@@ -17,27 +17,36 @@
 </template>
 
 <script>
+// 导入封装的子组件
 import TreeTools from "./components/tree-tools";
+// 导入获取组织架构企业部门列表的接口
+import { getDepartments } from "@/api/departments";
+// 导入把树形结构转化为数组的方法
+import { tranListToTreeDate } from "@/utils";
 export default {
   components: {
     TreeTools
   },
   data() {
     return {
-      company: { name: "火星人股份有限公司", message: "负责人" },
-      departs: [
-        {
-          name: "总裁办",
-          message: "你",
-          children: [{ name: "董事会", message: "好" }]
-        },
-        { name: "行政部", message: "啊" },
-        { name: "人事部", message: "哈" }
-      ],
+      company: {},
+      departs: [],
       defaultProps: {
         label: "name" // 表示 从这个属性显示内容
       }
     };
+  },
+  created() {
+    // 调用自身的方法
+    this.getDepartments();
+  },
+  methods: {
+    async getDepartments() {
+      const result = await getDepartments();
+      this.company = { name: result.companyName, manager: "负责人" };
+      this.departs = tranListToTreeDate(result.depts, ""); // 需要将其转化成树形结构
+      console.log(result);
+    }
   }
 };
 </script>
