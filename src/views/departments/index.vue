@@ -19,7 +19,7 @@
       </el-card>
     </div>
     <!-- 防止新增弹层组件 -->
-    <AddDept :showDialog="showDialog"></AddDept>
+    <AddDept :showDialog="showDialog" :treeNode="node"></AddDept>
   </div>
 </template>
 
@@ -55,7 +55,7 @@ export default {
   methods: {
     async getDepartments() {
       const result = await getDepartments();
-      this.company = { name: result.companyName, manager: "负责人" };
+      this.company = { name: result.companyName, manager: "负责人", id: "" };
       this.departs = tranListToTreeDate(result.depts, ""); // 需要将其转化成树形结构
       console.log(result);
     },
