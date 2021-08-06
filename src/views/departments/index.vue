@@ -14,12 +14,13 @@
             @delDepts="getDepartments"
             slot-scope="{data}"
             :treeNode="data"
+            @editDepts="editDepts"
           ></TreeTools>
         </el-tree>
       </el-card>
     </div>
     <!-- 防止新增弹层组件 -->
-    <AddDept @addDepts="getDepartments" :showDialog.sync="showDialog" :treeNode="node"></AddDept>
+    <AddDept ref="addDept" @addDepts="getDepartments" :showDialog.sync="showDialog" :treeNode="node"></AddDept>
   </div>
 </template>
 
@@ -60,9 +61,16 @@ export default {
       console.log(result);
     },
     addDepts(node) {
+      //点击新增弹出层
       this.showDialog = true; // 显示弹层
       // 因为node是当前的点击的部门， 此时这个部门应该记录下来,
       this.node = node;
+    },
+    editDepts(node) {
+      // 点击编辑弹出层
+      this.showDialog = true; // 控制编辑弹出层
+      this.node = node; // 记录编辑的节点
+      this.$refs.addDept.getDepartDetail(node.id);
     }
   }
 };
