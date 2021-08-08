@@ -17,9 +17,12 @@
               <el-table-column prop="name" label="名称" width="240px"></el-table-column>
               <el-table-column prop="description" label="描述"></el-table-column>
               <el-table-column label="操作">
-                <el-button size="small" type="success">分配权限</el-button>
-                <el-button size="small" type="primary">编辑</el-button>
-                <el-button size="small" type="danger">删除</el-button>
+                <!-- 作用域插槽  结构出里面的数据 -->
+                <template slot-scope="{row}">
+                  <el-button size="small" type="success">分配权限</el-button>
+                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="danger" @click="deleteRole(row.id)">删除</el-button>
+                </template>
               </el-table-column>
             </el-table>
             <!-- 放置分页组件 -->
@@ -75,7 +78,7 @@
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo } from "@/api/setting";
+import { getRoleList, getCompanyInfo, deleteRole } from "@/api/setting";
 import { mapGetters } from "vuex";
 export default {
   data() {
@@ -111,6 +114,17 @@ export default {
     changePage(newPage) {
       this.page.page = newPage;
       this.getRoleList();
+    },
+    async deleteRole(id) {
+      try {
+        await this.$confirm("确认删除该角色吗");
+        // 只有用户点击确认 才进入下面的程序，点击取消 进入 catch
+        await deleteRole(id); // 调用 删除接口
+        this.getRoleList(); // 重新加载数据
+        this.$message.success("删除角色成功");
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 };
