@@ -8,7 +8,12 @@
           <el-tab-pane label="角色管理">
             <!-- 按钮 -->
             <el-row style="height:60px">
-              <el-button size="small" icon="el-icon-plus" type="primary">新增角色</el-button>
+              <el-button
+                @click="showDialog = true"
+                size="small"
+                icon="el-icon-plus"
+                type="primary"
+              >新增角色</el-button>
             </el-row>
             <!-- 表格 -->
             <!-- 给表格绑定数据 -->
@@ -20,7 +25,7 @@
                 <!-- 作用域插槽  结构出里面的数据 -->
                 <template slot-scope="{row}">
                   <el-button size="small" type="success">分配权限</el-button>
-                  <el-button size="small" type="primary">编辑</el-button>
+                  <el-button size="small" type="primary" @click="editRole(row.id)">编辑</el-button>
                   <el-button size="small" type="danger" @click="deleteRole(row.id)">删除</el-button>
                 </template>
               </el-table-column>
@@ -74,12 +79,40 @@
         </el-tabs>
       </el-card>
     </div>
+
+    <!-- 放置一个弹层组件 -->
+    <!-- close事件 在点击确定的时候会触发 -->
+    <el-dialog title="编辑部门" :visible="showDialog" @close="btnCancel">
+      <el-form ref="roleForm" label-width="120px" :model="roleForm" :rules="rules">
+        <el-form-item label="角色名称" prop="name">
+          <el-input v-model="roleForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="角色描述">
+          <el-input v-model="roleForm.description"></el-input>
+        </el-form-item>
+      </el-form>
+      <!-- 放置footer插槽 -->
+      <el-row type="flex" justify="center">
+        <el-col :span="8">
+          <el-button size="small" @click="btnCancel">取消</el-button>
+          <el-button type="primary" size="small" @click="btnOK">确定</el-button>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { getRoleList, getCompanyInfo, deleteRole } from "@/api/setting";
+import {
+  getRoleList,
+  getCompanyInfo,
+  deleteRole,
+  getRoleDetail,
+  updateRole,
+  addRole
+} from "@/api/setting";
 import { mapGetters } from "vuex";
+import { log } from "util";
 export default {
   data() {
     return {
@@ -92,6 +125,14 @@ export default {
       },
       formDate: {
         // 公司信息
+      },
+      showDialog: false, // 控制弹层显示
+      roleForm: {
+        name: "", //  角色名称
+        description: "" // 角色描述
+      },
+      rules: {
+        name: [{ required: true, message: "角色名称不能为空", trigger: "blur" }]
       }
     };
   },
@@ -115,6 +156,7 @@ export default {
       this.page.page = newPage;
       this.getRoleList();
     },
+    // 删除信息
     async deleteRole(id) {
       try {
         await this.$confirm("确认删除该角色吗");
@@ -125,6 +167,40 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    // 编辑信息
+    async editRole(id) {
+      this.roleForm = await getRoleDetail(id); // 实现数据回写
+      this.showDialog = true; // 显示弹层
+    },
+    // 弹层中的确定事件
+    async btnOK() {
+      try {
+        await this.$refs.roleForm.validate();
+        if (this.roleForm.id) {
+          //  当数据里面有id 表示执行的是编辑操作
+          await updateRole(this.roleForm);
+        } else {
+          //  角色新增
+          await addRole(this.roleForm);
+        }
+        this.getRoleList(); // 重新拉取数据，渲染页面
+        this.$message.success("操作成功");
+        this.showDialog = false; // 点击关闭弹层 会触发 el-dialog的事件close事件
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    // 弹层中的 取消事件
+    btnCancel() {
+      this.showDialog = false;
+      // 点击弹层中的取消按钮 将表单滞空
+      this.roleForm = {
+        name: "",
+        description: ""
+      };
+      // 点击取消 关闭 校验
+      this.$refs.roleForm.resetFields();
     }
   }
 };
