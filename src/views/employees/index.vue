@@ -4,7 +4,7 @@
       <page-tools :show-before="true">
         <!-- 显示左侧的图标加文字 -->
         <template v-slot:before>
-          <span slot="before">共16条记录</span>
+          <span slot="before">共{{page.total}}条记录</span>
         </template>
 
         <!-- 显示右侧按钮 -->
@@ -15,15 +15,15 @@
         </template>
       </page-tools>
       <!-- 表格组件 -->
-      <el-card>
-        <el-table border>
-          <el-table-column label="序号" sortable />
-          <el-table-column label="姓名" sortable />
-          <el-table-column label="工号" sortable />
-          <el-table-column label="聘用形式" sortable />
-          <el-table-column label="部门" sortable />
-          <el-table-column label="入职时间" sortable />
-          <el-table-column label="账户状态" sortable />
+      <el-card v-loading="loading">
+        <el-table border :data="list">
+          <el-table-column label="序号" sortable type="index" />
+          <el-table-column label="姓名" sortable prop="username" />
+          <el-table-column label="工号" sortable prop="workNumber" />
+          <el-table-column label="聘用形式" sortable prop="formOfEmployment" />
+          <el-table-column label="部门" sortable prop="departmentName" />
+          <el-table-column label="入职时间" sortable prop="timeOfEntry" />
+          <el-table-column label="账户状态" sortable prop="enableState" />
           <el-table-column label="操作" sortable fixed="right" width="280">
             <template>
               <el-button type="text" size="small">查看</el-button>
@@ -37,7 +37,13 @@
         </el-table>
         <!-- 放置分页组件 -->
         <el-row type="flex" justify="center" align="middle" style="height:60px">
-          <el-pagination layout="prev,pager,next"></el-pagination>
+          <el-pagination
+            layout="prev,pager,next"
+            :page-size="page.size"
+            :current-page="page.page"
+            :total="page.total"
+            @current-change="changePage"
+          ></el-pagination>
         </el-row>
       </el-card>
     </div>
@@ -45,7 +51,38 @@
 </template>
 
 <script>
-export default {};
+import { getEmployeeList } from "@/api/employees";
+export default {
+  data() {
+    return {
+      list: [], // 存放请求接口返回的数据
+      page: {
+        page: 1, // 页数
+        size: 10, // 每一页显示的数量
+        total: 0 // 总数
+      },
+      loading: false //   显示遮罩层
+    };
+  },
+  created() {
+    this.getEmployeeList();
+  },
+  methods: {
+    async getEmployeeList() {
+      this.loading = true;
+      // 结构出 调用接口获取的数据
+      const { total, rows } = await getEmployeeList(this.page);
+      this.page.total = total;
+      this.list = rows;
+      this.loading = false;
+    },
+    // 控制分页
+    changePage(newPage) {
+      this.page.page = newPage; // 将点击的最新页码赋值给page对象中的页码
+      this.getEmployeeList(); //在重新获取 数据 显示页面
+    }
+  }
+};
 </script>
 
 <style>
