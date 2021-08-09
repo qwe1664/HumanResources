@@ -13,7 +13,8 @@ import store from './store'
 import router from './router'
 import Components from '@/components' // 导入自定义组件
 
-import * as directives from '@/directives'
+import * as directives from '@/directives' // 导入自定义指令
+import * as filters from '@/filters' // 导入过滤器方法
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -22,8 +23,13 @@ Vue.use(ElementUI, { locale })
 // 如果想要中文版 element-ui，按如下方式声明
 // Vue.use(ElementUI)
 
+
+// 在Vue里面进行遍历的时候 方法名称前面不要加s
 Object.keys(directives).forEach(key => {
   Vue.directive(key, directives[key])  // 注册自定义指令
+})
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key]) // 注册自定义过滤器
 })
 // 注册自定义组件
 Vue.use(Components)
