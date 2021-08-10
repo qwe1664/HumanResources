@@ -10,7 +10,7 @@
         <!-- 显示右侧按钮 -->
         <template v-slot:after>
           <el-button size="small" type="success" @click="$router.push('/import')">导入excel</el-button>
-          <el-button size="small" type="danger">导出excel</el-button>
+          <el-button size="small" type="danger" @click="exportDate">导出excel</el-button>
           <el-button size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
@@ -70,6 +70,7 @@
 import { getEmployeeList, delEmployee } from "@/api/employees";
 import EmployeeEnum from "@/api/constant/employees";
 import AddEmployee from "./components/add-employee";
+import { formatDate } from "@/filters";
 export default {
   data() {
     return {
@@ -123,6 +124,65 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    },
+    // 导出excel
+    exportDate() {
+      const headers = {
+        姓名: "username",
+        手机号: "mobile",
+        入职日期: "timeOfEntry",
+        聘用形式: "formOfEmployment",
+        转正日期: "correctionTime",
+        工号: "workNumber",
+        部门: "departmentName"
+      };
+      import("@/vendor/Export2Excel").then(async excel => {
+        const { rows } = await getEmployeeList({
+          page: 1,
+          size: this.page.total // 直接获取到所有数据
+        });
+        const data = this.formatJson(headers, rows);
+        excel.export_json_to_excel({
+          header: Object.keys(headers), // 拿到所有headers 表头
+          data,
+          filename: "员工资料表"
+        });
+
+        // excel 是引用文件的导出对象
+        // excel.export_json_to_excel({
+        //   header: ["姓名", "工资"],
+        //   data: [["aa", 2000]],
+        //   filename: "员工工资表"
+        //   // bookTyoe:'xlsx' // 导出文件类型
+        // });
+      });
+    },
+    // 定义一个方法 将表头数据和数据进行对应
+    // 将[{}] 转化为 [[]] 数据
+    formatJson(headers, rows) {
+      /*   
+        item 是一个对象 {mobile:133,name:'张三'}
+        object.keys(header) 拿到的是一个对象中的属性名 ['手机号','姓名']
+        在通过遍历 里面的属性名
+        header[key] 可以拿到  该对象中 属性名所对应的属性值
+        item[header[key]] 表示 拿到我对象中 属性名所 对应的属性值
+      */
+      return rows.map(item => {
+        return Object.keys(headers).map(key => {
+          if (
+            headers[key] === "timeOfEntry" ||
+            headers[key] === "correctionTime"
+          ) {
+            return formatDate(item[headers[key]]);
+          } else if (headers[key] === "formOfEmployment") {
+            const obj = EmployeeEnum.hireType.find(
+              obj => obj.id === item[headers[key]]
+            );
+            return obj ? obj.value : "未知";
+          }
+          return item[headers[key]];
+        });
+      });
     }
   }
 };
