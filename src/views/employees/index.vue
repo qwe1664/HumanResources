@@ -141,11 +141,15 @@ export default {
           page: 1,
           size: this.page.total // 直接获取到所有数据
         });
-        const data = this.formatJson(headers, rows);
+        const data = this.formatJson(headers, rows); // 返回的data就是要导出的[[]] 数据
+        const multiHeader = [["姓名", "主要信息", "", "", "", "", "部门"]]; // 定义表头
+        const merges = ["A1:A2", "B1:F1", "G1:G2"]; // 需要合并的单元格
         excel.export_json_to_excel({
           header: Object.keys(headers), // 拿到所有headers 表头
           data,
-          filename: "员工资料表"
+          filename: "员工资料表",
+          multiHeader,
+          merges
         });
 
         // excel 是引用文件的导出对象
