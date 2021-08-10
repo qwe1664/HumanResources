@@ -37,7 +37,7 @@
       <el-row class="inline-info">
         <el-col :span="12">
           <el-form-item label="手机">
-            <el-input v-model="userInfo.mobile" />
+            <el-input v-model="userInfo.mobile" disabled />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -316,7 +316,12 @@
 
 <script>
 import EmployeeEnum from "@/api/constant/employees";
-
+import {
+  getPersonalDetail,
+  updatePersonal,
+  saveUserDetailById
+} from "@/api/employees"; // get 获取个人详情下方的数据 , asve 保存个人详情上方数据， upda 保存个人详情下方数据
+import { getUserDetailById } from "@/api/user"; // 根据id获取用户基本信息接口
 export default {
   data() {
     return {
@@ -387,6 +392,26 @@ export default {
         remarks: "" // 备注
       }
     };
+  },
+  created() {
+    this.getUserDetailById();
+    this.getPersonalDetail();
+  },
+  methods: {
+    async getUserDetailById() {
+      this.userInfo = await getUserDetailById(this.userId);
+    },
+    async getPersonalDetail() {
+      this.formData = await getPersonalDetail(this.userId);
+    },
+    async saveUser() {
+      await saveUserDetailById(this.userInfo);
+      this.$message.success("保存用户信息成功");
+    },
+    async savePersonal() {
+      await updatePersonal(this.formData);
+      this.$message.success("保存用户基本信息成功");
+    }
   }
 };
 </script>

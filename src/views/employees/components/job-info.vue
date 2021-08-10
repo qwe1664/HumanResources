@@ -1,5 +1,5 @@
 <template>
-<div class="job-info">
+  <div class="job-info">
     <!-- 基础信息 -->
     <el-form label-width="220px">
       <div class="block">
@@ -14,7 +14,7 @@
             placeholder="选择日期"
             value-format="yyyy-MM-dd"
           />
-        </el-form-item> -->
+        </el-form-item>-->
         <el-form-item label="转正状态">
           <el-select v-model="formData.stateOfCorrection" placeholder="请选择" disabled>
             <el-option
@@ -32,16 +32,32 @@
         </el-form-item>
         <el-form-item label="汇报对象">
           <el-select v-model="formData.reportId" filterable placeholder="请选择" class="inputW">
-            <el-option v-for="item in depts" :key="item.id" :label="item.username" :value="item.id" />
+            <el-option
+              v-for="item in depts"
+              :key="item.id"
+              :label="item.username"
+              :value="item.id"
+            />
           </el-select>
         </el-form-item>
         <el-form-item label="HRBP">
           <el-select v-model="formData.hrbp" filterable placeholder="请选择" class="inputW">
-            <el-option v-for="item in depts" :key="item.id" :label="item.username" :value="item.id" class="inputW" />
+            <el-option
+              v-for="item in depts"
+              :key="item.id"
+              :label="item.username"
+              :value="item.id"
+              class="inputW"
+            />
           </el-select>
         </el-form-item>
         <el-form-item class="formInfo" label="调整司龄(天)：">
-          <el-input v-model="formData.adjustmentAgedays" type="number" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.adjustmentAgedays"
+            type="number"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="首次参加工作时间">
           <el-date-picker
@@ -52,7 +68,12 @@
           />
         </el-form-item>
         <el-form-item label="调整工龄">
-          <el-input v-model="formData.adjustmentOfLengthOfService" placeholder="0.00年" class="inputW" disabled />
+          <el-input
+            v-model="formData.adjustmentOfLengthOfService"
+            placeholder="0.00年"
+            class="inputW"
+            disabled
+          />
         </el-form-item>
       </div>
       <!-- 合同信息 -->
@@ -145,7 +166,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="推荐企业/人">
-          <el-input v-model="formData.recommenderBusinessPeople" placeholder="请输入" class="infoPosition inputW" />
+          <el-input
+            v-model="formData.recommenderBusinessPeople"
+            placeholder="请输入"
+            class="infoPosition inputW"
+          />
         </el-form-item>
       </div>
       <!-- 从业信息 -->
@@ -155,11 +180,11 @@
       </el-form-item>
     </el-form>
   </div>
-
 </template>
 
 <script>
-import EmployeeEnum from '@/api/constant/employees'
+import EmployeeEnum from "@/api/constant/employees";
+import { getJobDetail, getEmployessSimple, updateJob } from "@/api/employees";
 
 export default {
   data() {
@@ -168,38 +193,53 @@ export default {
       depts: [],
       EmployeeEnum,
       formData: {
-        adjustmentAgedays: '', // 调整司龄天
-        adjustmentOfLengthOfService: '', // 调整工龄天
-        closingTimeOfCurrentContract: '', // 现合同结束时间
-        companyId: '', // 公司ID
-        contractDocuments: '', // 合同文件
-        contractPeriod: '', // 合同期限
-        correctionEvaluation: '', //  转正评价
-        currentContractStartTime: '', // 现合同开始时间
-        firstContractTerminationTime: '', // 首次合同结束时间
-        hrbp: '', // HRBP
-        initialContractStartTime: '', // 首次合同开始时间
-        otherRecruitmentChannels: '', // 其他招聘渠道
-        post: '', // 岗位
+        adjustmentAgedays: "", // 调整司龄天
+        adjustmentOfLengthOfService: "", // 调整工龄天
+        closingTimeOfCurrentContract: "", // 现合同结束时间
+        companyId: "", // 公司ID
+        contractDocuments: "", // 合同文件
+        contractPeriod: "", // 合同期限
+        correctionEvaluation: "", //  转正评价
+        currentContractStartTime: "", // 现合同开始时间
+        firstContractTerminationTime: "", // 首次合同结束时间
+        hrbp: "", // HRBP
+        initialContractStartTime: "", // 首次合同开始时间
+        otherRecruitmentChannels: "", // 其他招聘渠道
+        post: "", // 岗位
         rank: null, // 职级
-        recommenderBusinessPeople: '', // 推荐企业人
-        recruitmentChannels: '', // 招聘渠道
-        renewalNumber: '', // 续签次数
-        reportId: '', // 汇报对象
+        recommenderBusinessPeople: "", // 推荐企业人
+        recruitmentChannels: "", // 招聘渠道
+        renewalNumber: "", // 续签次数
+        reportId: "", // 汇报对象
         reportName: null, // 汇报对象
-        socialRecruitment: '', // 社招校招
-        stateOfCorrection: '', // 转正状态
-        taxableCity: '', // 纳税城市
-        userId: '', // 员工ID
-        workMailbox: '', // 工作邮箱
-        workingCity: '', // 工作城市
-        workingTimeForTheFirstTime: '' // 首次参加工作时间
+        socialRecruitment: "", // 社招校招
+        stateOfCorrection: "", // 转正状态
+        taxableCity: "", // 纳税城市
+        userId: "", // 员工ID
+        workMailbox: "", // 工作邮箱
+        workingCity: "", // 工作城市
+        workingTimeForTheFirstTime: "" // 首次参加工作时间
       }
+    };
+  },
+  created() {
+    this.getJobDetail();
+    this.getEmployessSimple();
+  },
+  methods: {
+    async getJobDetail() {
+      this.formData = await getJobDetail(this.userId);
+    },
+    async getEmployessSimple() {
+      this.depts = await getEmployessSimple();
+    },
+    async saveJob() {
+      await updateJob(this.formData);
+      this.$message.success("用户基础信息保存成功");
     }
   }
-}
+};
 </script>
 
 <style>
-
 </style>
