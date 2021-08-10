@@ -39,4 +39,16 @@ export function addEmployee(data) {
     method: 'post',
     data
   })
-} 
+}
+
+/* 
+  批量导入员工数据接口
+  参数data是一个数组类型
+*/
+export function importEmployee(data) {
+  return request({
+    url: '/sys/user/batch',
+    method: 'post',
+    data
+  })
+}

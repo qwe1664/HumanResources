@@ -9,8 +9,8 @@
 
         <!-- 显示右侧按钮 -->
         <template v-slot:after>
-          <el-button size="small" type="success">导出excel</el-button>
-          <el-button size="small" type="danger">导如excel</el-button>
+          <el-button size="small" type="success" @click="$router.push('/import')">导入excel</el-button>
+          <el-button size="small" type="danger">导出excel</el-button>
           <el-button size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
