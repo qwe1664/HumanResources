@@ -28,4 +28,15 @@ export function delEmployee(id) {
     url: `/sys/user/${id}`,
     method: 'delete'
   })
+}
+
+/* 
+  新增员工的接口
+*/
+export function addEmployee(data) {
+  return request({
+    url: '/sys/user',
+    method: 'post',
+    data
+  })
 } 

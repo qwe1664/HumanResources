@@ -11,7 +11,7 @@
         <template v-slot:after>
           <el-button size="small" type="success">导出excel</el-button>
           <el-button size="small" type="danger">导如excel</el-button>
-          <el-button size="small" type="primary">新增员工</el-button>
+          <el-button size="small" type="primary" @click="showDialog=true">新增员工</el-button>
         </template>
       </page-tools>
       <!-- 表格组件 -->
@@ -61,12 +61,15 @@
         </el-row>
       </el-card>
     </div>
+    <!-- sync修饰符 是子组件 想要改变父组件中传递过去的值的一个语法糖，子组件中只需要update:修改名称，布尔值 -->
+    <add-employee :show-dialog.sync="showDialog"></add-employee>
   </div>
 </template>
 
 <script>
 import { getEmployeeList, delEmployee } from "@/api/employees";
 import EmployeeEnum from "@/api/constant/employees";
+import AddEmployee from "./components/add-employee";
 export default {
   data() {
     return {
@@ -76,8 +79,12 @@ export default {
         size: 10, // 每一页显示的数量
         total: 0 // 总数
       },
-      loading: false //   显示遮罩层
+      loading: false, //   显示遮罩层
+      showDialog: false // 控制用户新增弹层
     };
+  },
+  components: {
+    AddEmployee
   },
   created() {
     this.getEmployeeList();
