@@ -22,8 +22,14 @@
               </el-form-item>
             </el-form>
           </el-tab-pane>
-          <el-tab-pane label="个人详情"></el-tab-pane>
-          <el-tab-pane label="岗位信息"></el-tab-pane>
+          <el-tab-pane label="个人详情">
+            <!-- <UserInfo></UserInfo> -->
+            <!-- 动态组件  他可以切换组件，修改绑定的is属性 显示不同的组件 -->
+            <component :is="UserComponent"></component>
+          </el-tab-pane>
+          <el-tab-pane label="岗位信息">
+            <component :is="JobComponent"></component>
+          </el-tab-pane>
         </el-tabs>
       </el-card>
     </div>
@@ -33,9 +39,13 @@
 <script>
 import { saveUserDetailById } from "@/api/employees";
 import { getUserDetailById } from "@/api/user"; // 读取用户信息
+import UserInfo from "./components/user-info"; // 个人组件
+import JobInfo from "./components/job-info";
 export default {
   data() {
     return {
+      UserComponent: "UserInfo",
+      JobComponent: "JobInfo",
       userId: this.$route.params.id, // 直接讲路由中的参数 赋值给了 data中的属性
       userInfo: {
         //   专门存放基本信息
@@ -52,6 +62,10 @@ export default {
         ]
       }
     };
+  },
+  components: {
+    UserInfo,
+    JobInfo
   },
   created() {
     this.getUserDetailById();
