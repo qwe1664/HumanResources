@@ -14,5 +14,12 @@ export default {
       title: '员工管理', // 因为左侧导航读取了这里的title属性 ，根据遍历这个属性来循环左侧导航
       icon: 'people'
     }
+  }, {
+    path: 'detail/:id', // 动态路由，表示该地址后面需要跟上一个当前点击数据的id,如果 加一个 ? 表示可以传值也可以不传值都能进行访问
+    component: () => import('@/views/employees/detail'),
+    meta: {
+      title: '员工详情'
+    },
+    hidden: true // 表示该内容 不再左侧显示
   }]
 }

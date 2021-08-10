@@ -40,7 +40,11 @@
           <el-table-column label="操作" sortable fixed="right" width="280">
             <!-- 通过作用于插槽 结构里面的数据，将点击的id传递给删除按钮 -->
             <template v-slot="{row}">
-              <el-button type="text" size="small">查看</el-button>
+              <el-button
+                type="text"
+                size="small"
+                @click="$router.push(`employees/detail/${row.id}`)"
+              >查看</el-button>
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
