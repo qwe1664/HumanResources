@@ -107,6 +107,7 @@ export default {
     // 格式化聘用形式
     // 行 列 单元格里面的数据 索引
     formatEmployment(row, column, cellValue, index) {
+      // 要去找 1所对应的值
       const obj = EmployeeEnum.hireType.find(item => item.id === cellValue);
       return obj ? obj.value : "未知";
     },
