@@ -4,14 +4,23 @@
       <page-tools :show-before="true">
         <!-- 显示左侧的图标加文字 -->
         <template v-slot:before>
-          <span slot="before">共{{page.total}}条记录</span>
+          <span slot="before">共{{ page.total }}条记录</span>
         </template>
 
         <!-- 显示右侧按钮 -->
         <template v-slot:after>
-          <el-button size="small" type="success" @click="$router.push('/import')">导入excel</el-button>
-          <el-button size="small" type="danger" @click="exportDate">导出excel</el-button>
-          <el-button size="small" type="primary" @click="showDialog=true">新增员工</el-button>
+          <el-button
+            size="small"
+            type="success"
+            @click="$router.push('/import')"
+            >导入excel</el-button
+          >
+          <el-button size="small" type="danger" @click="exportDate"
+            >导出excel</el-button
+          >
+          <el-button size="small" type="primary" @click="showDialog = true"
+            >新增员工</el-button
+          >
         </template>
       </page-tools>
       <!-- 表格组件 -->
@@ -29,9 +38,16 @@
           <el-table-column label="部门" sortable prop="departmentName" />
           <el-table-column label="入职时间" sortable prop="timeOfEntry">
             <!-- 将时间格式化 -->
-            <template v-slot="{row}">{{row.timeOfEntry | formatDate}}</template>
+            <template v-slot="{ row }">{{
+              row.timeOfEntry | formatDate
+            }}</template>
           </el-table-column>
-          <el-table-column label="账户状态" align="center" sortable prop="enableState">
+          <el-table-column
+            label="账户状态"
+            align="center"
+            sortable
+            prop="enableState"
+          >
             <template slot-scope="{ row }">
               <!-- 根据当前状态来确定 是否打开开关 -->
               <el-switch :value="row.enableState === 1" />
@@ -39,22 +55,32 @@
           </el-table-column>
           <el-table-column label="操作" sortable fixed="right" width="280">
             <!-- 通过作用于插槽 结构里面的数据，将点击的id传递给删除按钮 -->
-            <template v-slot="{row}">
+            <template v-slot="{ row }">
               <el-button
                 type="text"
                 size="small"
                 @click="$router.push(`employees/detail/${row.id}`)"
-              >查看</el-button>
+                >查看</el-button
+              >
               <el-button type="text" size="small">转正</el-button>
               <el-button type="text" size="small">调岗</el-button>
               <el-button type="text" size="small">离职</el-button>
-              <el-button type="text" size="small">角色</el-button>
-              <el-button type="text" size="small" @click="delEmployee(row.id)">删除</el-button>
+              <el-button type="text" size="small" @click="editRole(row.id)"
+                >角色</el-button
+              >
+              <el-button type="text" size="small" @click="delEmployee(row.id)"
+                >删除</el-button
+              >
             </template>
           </el-table-column>
         </el-table>
         <!-- 放置分页组件 -->
-        <el-row type="flex" justify="center" align="middle" style="height:60px">
+        <el-row
+          type="flex"
+          justify="center"
+          align="middle"
+          style="height: 60px"
+        >
           <el-pagination
             layout="prev,pager,next"
             :page-size="page.size"
@@ -67,6 +93,13 @@
     </div>
     <!-- sync修饰符 是子组件 想要改变父组件中传递过去的值的一个语法糖，子组件中只需要update:修改名称，布尔值 -->
     <add-employee :show-dialog.sync="showDialog"></add-employee>
+
+    <!-- 角色管理弹窗  放置分配组件 -->
+    <assign-role
+      :show-role-dialog.sync="showRoleDialog"
+      :user-id="userId"
+      ref="assignRole"
+    ></assign-role>
   </div>
 </template>
 
@@ -75,6 +108,7 @@ import { getEmployeeList, delEmployee } from "@/api/employees";
 import EmployeeEnum from "@/api/constant/employees";
 import AddEmployee from "./components/add-employee";
 import { formatDate } from "@/filters";
+import AssignRole from "./components/assign-role.vue";
 export default {
   data() {
     return {
@@ -82,14 +116,17 @@ export default {
       page: {
         page: 1, // 页数
         size: 10, // 每一页显示的数量
-        total: 0 // 总数
+        total: 0, // 总数
       },
       loading: false, //   显示遮罩层
-      showDialog: false // 控制用户新增弹层
+      showDialog: false, // 控制用户新增弹层
+      showRoleDialog: false, // 显示分配角色弹窗
+      userId: null, // 定义一个userId
     };
   },
   components: {
-    AddEmployee
+    AddEmployee,
+    AssignRole,
   },
   created() {
     this.getEmployeeList();
@@ -113,7 +150,7 @@ export default {
     // 行 列 单元格里面的数据 索引
     formatEmployment(row, column, cellValue, index) {
       // 要去找 1所对应的值
-      const obj = EmployeeEnum.hireType.find(item => item.id === cellValue);
+      const obj = EmployeeEnum.hireType.find((item) => item.id === cellValue);
       return obj ? obj.value : "未知";
     },
     async delEmployee(id) {
@@ -138,12 +175,12 @@ export default {
         聘用形式: "formOfEmployment",
         转正日期: "correctionTime",
         工号: "workNumber",
-        部门: "departmentName"
+        部门: "departmentName",
       };
-      import("@/vendor/Export2Excel").then(async excel => {
+      import("@/vendor/Export2Excel").then(async (excel) => {
         const { rows } = await getEmployeeList({
           page: 1,
-          size: this.page.total // 直接获取到所有数据
+          size: this.page.total, // 直接获取到所有数据
         });
         const data = this.formatJson(headers, rows); // 返回的data就是要导出的[[]] 数据
         const multiHeader = [["姓名", "主要信息", "", "", "", "", "部门"]]; // 定义表头
@@ -153,7 +190,7 @@ export default {
           data,
           filename: "员工资料表",
           multiHeader,
-          merges
+          merges,
         });
 
         // excel 是引用文件的导出对象
@@ -175,8 +212,8 @@ export default {
         header[key] 可以拿到  该对象中 属性名所对应的属性值
         item[header[key]] 表示 拿到我对象中 属性名所 对应的属性值
       */
-      return rows.map(item => {
-        return Object.keys(headers).map(key => {
+      return rows.map((item) => {
+        return Object.keys(headers).map((key) => {
           if (
             headers[key] === "timeOfEntry" ||
             headers[key] === "correctionTime"
@@ -184,15 +221,27 @@ export default {
             return formatDate(item[headers[key]]);
           } else if (headers[key] === "formOfEmployment") {
             const obj = EmployeeEnum.hireType.find(
-              obj => obj.id === item[headers[key]]
+              (obj) => obj.id === item[headers[key]]
             );
             return obj ? obj.value : "未知";
           }
           return item[headers[key]];
         });
       });
-    }
-  }
+    },
+
+    // 点击角色功能
+    async editRole(id) {
+      this.userId = id; // props 赋值  渲染是异步的
+      await this.$refs.assignRole.getUserDetailById(id); // 调用子组件中的方法
+      this.showRoleDialog = true;
+      // try{
+
+      // }catch(error){
+      //   console.log(error);
+      // }
+    },
+  },
 };
 </script>
 
