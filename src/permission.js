@@ -41,7 +41,11 @@ router.beforeEach(async (to, from, next) => {
 
 
         // addRoutes 必须 用 next(地址)  不能用next()
-        router.addRoutes(routes) // 添加动态路由到路由表 铺路
+
+        // 添加后面这个、是为了解决刷新页面出现404的情况，需要讲404放到最后、到动态路由后面
+        router.addRoutes([...routes, { path: '*', redirect: '/404', hidden: true }]) // 添加动态路由到路由表 铺路
+
+        // { path: '*', redirect: '/404', hidden: true }  第十三天、第6个视频
         next(to.path)
       } else {
         next()  // 否则放行
