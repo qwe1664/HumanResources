@@ -2,18 +2,16 @@
   <el-card class="page-tools">
     <el-row type="flex" justify="space-between" align="middle">
       <el-col>
-        <!-- 前插槽 -->
-        <!-- 有名字的叫 具名插槽  没有名字的叫匿名插槽 -->
-        <div class="before" v-if="showBefore">
-          <!-- 图标随着 showBefore 显示 -->
-          <i class="el-icon-info"></i>
-          <slot name="before"></slot>
+        <div v-if="showBefore" class="before">
+          <i class="el-icon-info" />
+          <!-- 定义前面得插槽 -->
+          <slot name="before" />
         </div>
       </el-col>
       <el-col>
-        <!-- 后插槽 -->
         <el-row type="flex" justify="end">
-          <slot name="after"></slot>
+          <!-- 定义后面的插槽 -->
+          <slot name="after" />
         </el-row>
       </el-col>
     </el-row>
@@ -25,9 +23,9 @@ export default {
   props: {
     showBefore: {
       type: Boolean,
-      default: false
-    }
-  }
+      default: false,
+    },
+  },
 };
 </script>
 

@@ -58,6 +58,7 @@
         <el-col :span="12">
           <el-form-item label="员工头像">
             <!-- 放置上传图片 -->
+            <image-upload ref="staffPhoto" />
           </el-form-item>
         </el-col>
       </el-row>
@@ -74,7 +75,10 @@
       <div class="block">
         <div class="title">基础信息</div>
         <el-form-item label="最高学历">
-          <el-select v-model="formData.theHighestDegreeOfEducation" class="inputW2">
+          <el-select
+            v-model="formData.theHighestDegreeOfEducation"
+            class="inputW2"
+          >
             <el-option
               v-for="item in EmployeeEnum.highestDegree"
               :key="item.value"
@@ -88,6 +92,8 @@
 
         <el-form-item label="员工照片">
           <!-- 放置上传图片 -->
+          <!-- ref不要重名 -->
+          <image-upload ref="myStaffPhoto" />
         </el-form-item>
         <el-form-item label="国家/地区">
           <el-select v-model="formData.nationalArea" class="inputW2">
@@ -100,16 +106,32 @@
           </el-select>
         </el-form-item>
         <el-form-item label="护照号">
-          <el-input v-model="formData.passportNo" placeholder="正规护照格式" class="inputW" />
+          <el-input
+            v-model="formData.passportNo"
+            placeholder="正规护照格式"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="身份证号">
-          <el-input v-model="formData.idNumber" placeholder="正规身份证格式" class="inputW" />
+          <el-input
+            v-model="formData.idNumber"
+            placeholder="正规身份证格式"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="籍贯">
-          <el-input v-model="formData.nativePlace" placeholder="籍贯地址" class="inputW5" />
+          <el-input
+            v-model="formData.nativePlace"
+            placeholder="籍贯地址"
+            class="inputW5"
+          />
         </el-form-item>
         <el-form-item label="民族">
-          <el-input v-model="formData.nation" placeholder="请输入民族" class="inputW2" />
+          <el-input
+            v-model="formData.nation"
+            placeholder="请输入民族"
+            class="inputW2"
+          />
         </el-form-item>
         <el-form-item label="婚姻状况">
           <el-select v-model="formData.maritalStatus" class="inputW2">
@@ -122,7 +144,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="生日">
-          <el-input v-model="formData.birthday" placeholder="示例 0323" class="inputW" />
+          <el-input
+            v-model="formData.birthday"
+            placeholder="示例 0323"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="年龄">
           <el-input v-model="formData.age" type="number" class="inputW2" />
@@ -163,7 +189,10 @@
           />
         </el-form-item>
         <el-form-item label="存档机构">
-          <el-input v-model="formData.archivingOrganization" placeholder="请输入" />
+          <el-input
+            v-model="formData.archivingOrganization"
+            placeholder="请输入"
+          />
         </el-form-item>
         <el-form-item label="子女状态">
           <el-input v-model="formData.stateOfChildren" placeholder="请输入" />
@@ -175,10 +204,16 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="有无违法违纪状态">
-          <el-input v-model="formData.isThereAnyViolationOfLawOrDiscipline" placeholder="请输入" />
+          <el-input
+            v-model="formData.isThereAnyViolationOfLawOrDiscipline"
+            placeholder="请输入"
+          />
         </el-form-item>
         <el-form-item label="有无重大病史">
-          <el-input v-model="formData.areThereAnyMajorMedicalHistories" placeholder="请输入" />
+          <el-input
+            v-model="formData.areThereAnyMajorMedicalHistories"
+            placeholder="请输入"
+          />
         </el-form-item>
       </div>
       <!-- 通讯信息 -->
@@ -188,7 +223,11 @@
           <el-input v-model="formData.qq" placeholder="请输入" class="inputW" />
         </el-form-item>
         <el-form-item label="微信">
-          <el-input v-model="formData.wechat" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.wechat"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="现居住地">
           <el-input v-model="formData.placeOfResidence" placeholder="请输入" />
@@ -214,10 +253,18 @@
           />
         </el-form-item>
         <el-form-item label="紧急联系人">
-          <el-input v-model="formData.emergencyContact" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.emergencyContact"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="紧急联系电话">
-          <el-input v-model="formData.emergencyContactNumber" placeholder="11位字符" class="inputW" />
+          <el-input
+            v-model="formData.emergencyContactNumber"
+            placeholder="11位字符"
+            class="inputW"
+          />
         </el-form-item>
       </div>
       <!-- 账号信息 -->
@@ -231,13 +278,25 @@
           />
         </el-form-item>
         <el-form-item label="公积金账号">
-          <el-input v-model="formData.providentFundAccount" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.providentFundAccount"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="银行卡号">
-          <el-input v-model="formData.bankCardNumber" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.bankCardNumber"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="开户行">
-          <el-input v-model="formData.openingBank" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.openingBank"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
       </div>
       <!-- 教育信息 -->
@@ -254,7 +313,11 @@
           </el-select>
         </el-form-item>
         <el-form-item label="毕业学校">
-          <el-input v-model="formData.graduateSchool" placeholder="请输入" class="inputW2" />
+          <el-input
+            v-model="formData.graduateSchool"
+            placeholder="请输入"
+            class="inputW2"
+          />
         </el-form-item>
         <el-form-item label="入学时间">
           <el-date-picker
@@ -275,23 +338,35 @@
           />
         </el-form-item>
         <el-form-item label="专业">
-          <el-input v-model="formData.major" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.major"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
       </div>
       <!-- 从业信息 -->
       <div class="block">
         <div class="title">从业信息</div>
         <el-form-item label="上家公司">
-          <el-input v-model="formData.homeCompany" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.homeCompany"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="职称">
-          <el-input v-model="formData.title" placeholder="请输入" class="inputW" />
+          <el-input
+            v-model="formData.title"
+            placeholder="请输入"
+            class="inputW"
+          />
         </el-form-item>
         <el-form-item label="有无竞业限制">
           <el-input
             v-model="formData.isThereAnyCompetitionRestriction"
             placeholder="请输入"
-            style="width:80%"
+            style="width: 80%"
           />
         </el-form-item>
         <el-form-item label="备注">
@@ -299,7 +374,7 @@
             v-model="formData.remarks"
             type="textarea"
             placeholder="请输入备注"
-            style="width:80%"
+            style="width: 80%"
           />
         </el-form-item>
         <!-- 保存员工信息 -->
@@ -319,7 +394,7 @@ import EmployeeEnum from "@/api/constant/employees";
 import {
   getPersonalDetail,
   updatePersonal,
-  saveUserDetailById
+  saveUserDetailById,
 } from "@/api/employees"; // get 获取个人详情下方的数据 , asve 保存个人详情上方数据， upda 保存个人详情下方数据
 import { getUserDetailById } from "@/api/user"; // 根据id获取用户基本信息接口
 export default {
@@ -389,8 +464,8 @@ export default {
         resume: "", // 简历
         isThereAnyCompetitionRestriction: "", // 有无竞业限制
         proofOfDepartureOfFormerCompany: "", // 前公司离职证明
-        remarks: "" // 备注
-      }
+        remarks: "", // 备注
+      },
     };
   },
   created() {
@@ -398,21 +473,52 @@ export default {
     this.getPersonalDetail();
   },
   methods: {
+    // 读取上半部分的内容
     async getUserDetailById() {
-      this.userInfo = await getUserDetailById(this.userId);
+      this.userInfo = await getUserDetailById(this.userId)
+      if (this.userInfo.staffPhoto) {
+        // 这里我们赋值，同时需要给赋值的地址一个标记 upload: true
+        this.$refs.staffPhoto.fileList = [{ url: this.userInfo.staffPhoto, upload: true }]
+      }
     },
-    async getPersonalDetail() {
-      this.formData = await getPersonalDetail(this.userId);
+    
+     // 读取下半部分内容
+    async  getPersonalDetail() {
+      this.formData = await getPersonalDetail(this.userId)
+      if (this.formData.staffPhoto) {
+        this.$refs.myStaffPhoto.fileList = [{ url: this.formData.staffPhoto, upload: true }]
+      }
     },
+
     async saveUser() {
-      await saveUserDetailById(this.userInfo);
-      this.$message.success("保存用户信息成功");
+      // 去读取 员工上传的头像
+      const fileList = this.$refs.staffPhoto.fileList; // 读取上传组件的数据
+      if (fileList.some((item) => !item.upload)) {
+        //  如果此时去找 upload为false的图片 找到了说明 有图片还没有上传完成
+        this.$message.warning("您当前还有图片没有上传完成！");
+        return;
+      }
+      // 通过合并 得到一个新对象
+      await saveUserDetailById({
+        ...this.userInfo,
+        staffPhoto: fileList && fileList.length ? fileList[0].url : "",
+      });
+      this.$message.success("保存基本信息成功");
     },
     async savePersonal() {
-      await updatePersonal(this.formData);
-      this.$message.success("保存用户基本信息成功");
-    }
-  }
+      const fileList = this.$refs.myStaffPhoto.fileList;
+      if (fileList.some((item) => !item.upload)) {
+        //  如果此时去找 upload为false的图片 找到了说明 有图片还没有上传完成
+        this.$message.warning("您当前还有图片没有上传完成！");
+        return;
+      }
+      await updatePersonal({
+        ...this.formData,
+        staffPhoto: fileList && fileList.length ? fileList[0].url : "",
+      });
+      this.$message.success("保存基础信息成功");
+    },
+  },
 };
 </script>
 

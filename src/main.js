@@ -15,6 +15,7 @@ import Components from '@/components' // 导入自定义组件
 
 import * as directives from '@/directives' // 导入自定义指令
 import * as filters from '@/filters' // 导入过滤器方法
+import CheckPermission from '@/mixin/checkPermission' // 导入混入模块
 import '@/icons' // icon
 import '@/permission' // permission control
 
@@ -33,6 +34,8 @@ Object.keys(filters).forEach(key => {
 })
 // 注册自定义组件
 Vue.use(Components)
+// 全局混入检查对象
+Vue.mixin(CheckPermission) // 表示所有的组件都拥有了检查的方法
 
 Vue.config.productionTip = false
 

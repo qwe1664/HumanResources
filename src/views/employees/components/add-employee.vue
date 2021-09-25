@@ -1,62 +1,66 @@
 <template>
-  <!-- 弹层 -->
   <el-dialog :visible="showDialog" title="新增员工" @close="btnCancel">
     <!-- 表单 -->
-    <el-form ref="addEmployee" label-width="120px" :model="formData" :rules="rules">
+    <el-form ref="addEmployee" label-width="120px" :rules="rules" :model="formData">
       <el-form-item label="姓名" prop="username">
-        <el-input style="width:50%" placeholder="请输入姓名" v-model="formData.username" />
+        <el-input v-model="formData.username" style="width:70%" placeholder="请输入姓名"></el-input>
       </el-form-item>
       <el-form-item label="手机" prop="mobile">
-        <el-input style="width:50%" placeholder="请输入手机号" v-model="formData.mobile" />
+        <el-input v-model="formData.mobile" style="width:70%" placeholder="请输入手机号"></el-input>
       </el-form-item>
       <el-form-item label="入职时间" prop="timeOfEntry">
-        <el-date-picker style="width:50%" placeholder="请选择入职时间" v-model="formData.timeOfEntry" />
+        <el-date-picker v-model="formData.timeOfEntry" style="width:70%" placeholder="请选择入职时间"></el-date-picker>
       </el-form-item>
       <el-form-item label="聘用形式" prop="formOfEmployment">
-        <el-select style="width:50%" placeholder="请选择" v-model="formData.formOfEmployment">
+        <el-select v-model="formData.formOfEmployment" style="width:70%" placeholder="请选择聘用形式">
           <el-option
             v-for="item in EmployeeEnum.hireType"
-            :key="item.id"
-            :label="item.value"
             :value="item.id"
-          />
+            :label="item.value"
+            :key="item.id"
+          ></el-option>
         </el-select>
       </el-form-item>
       <el-form-item label="工号" prop="workNumber">
-        <el-input style="width:50%" placeholder="请输入工号" v-model="formData.workNumber" />
+        <el-input v-model="formData.workNumber" style="width:70%" placeholder="请输入工号"></el-input>
       </el-form-item>
       <el-form-item label="部门" prop="departmentName">
-        <el-input
-          style="width:50%"
-          placeholder="请选择部门"
-          v-model="formData.departmentName"
+        <!-- <el-input
           @focus="getDepartments"
-        />
-        <!-- 放置一个tree 组件 -->
-        <el-tree
-          :data="treeData"
-          :props="{label:'name'}"
-          :default-expand-all="true"
-          v-if="showTree"
+          v-model="formData.departmentName"
+          style="width:70%"
+          placeholder="请输入部门"
+        ></el-input>-->
+        <el-cascader
+          v-model="formData.departmentName"
+          :options="treeData"
+          :props="{ expandTrigger: 'hover' ,label:'name',value:'name'}"
+          @change="handleChange"
+          @focus="getDepartments"
+          style="width:70%"
+          placeholder="请选择部门"
+        ></el-cascader>
+        <!-- @node-click="selectNode" -->
+        <!-- 放置数型组件 -->
+        <!-- <el-tree
+          default-expand-all
           v-loading="loading"
+          :data="treeData"
+          :props="defaultProps"
+          v-if="showTree"
           @node-click="selectNode"
-        ></el-tree>
+        ></el-tree>-->
       </el-form-item>
-      <el-form-item label="转正时间" prop="correctionTime">
-        <el-date-picker style="width:50%" placeholder="请选择转正时间" v-model="formData.correctionTime" />
+      <el-form-item label="转正日期" prop="correctionTime">
+        <el-date-picker v-model="formData.correctionTime" style="width:70%" placeholder="请选择转正日期"></el-date-picker>
       </el-form-item>
     </el-form>
-
-    <!-- footer插槽 -->
-    <!-- 也可以直接在 row 身上写  slot="footer" -->
-    <template v-slot:footer>
-      <el-row type="flex" justify="center">
-        <el-col :span="6">
-          <el-button size="small" @click="btnCancel">取消</el-button>
-          <el-button size="small" type="primary" @click="btnOk">确定</el-button>
-        </el-col>
-      </el-row>
-    </template>
+    <el-row type="flex" justify="center" slot="footer">
+      <el-col :span="6">
+        <el-button size="small" @click="btnCancel">取消</el-button>
+        <el-button size="small" type="primary" @click="btnOK">确定</el-button>
+      </el-col>
+    </el-row>
   </el-dialog>
 </template>
 
@@ -66,6 +70,12 @@ import { addEmployee } from "@/api/employees";
 import { tranListToTreeDate } from "@/utils";
 import EmployeeEnum from "@/api/constant/employees";
 export default {
+  name: "AddEmploy",
+  /* 
+    父组件也可以通过 v-model 传递过来值 默认的值为value，如果需要修改默认的值为input
+    如果想要修改名称  通过 model：{prop：修改值，event：修改事件名称}
+    如果子组件想要直接修改  this.$emit('修改事件名称',true)
+  */
   props: {
     showDialog: {
       type: Boolean,
@@ -74,8 +84,7 @@ export default {
   },
   data() {
     return {
-      EmployeeEnum, // 存放在api文件夹下引入对 聘用形式的存放
-      // 绑定表单数据
+      // 定义表单数据
       formData: {
         username: "",
         mobile: "",
@@ -85,10 +94,20 @@ export default {
         timeOfEntry: "",
         correctionTime: ""
       },
+      treeData: [], // 用于存放 树形数据的数组
+      defaultProps: {
+        // 修改树形结构中 默认找的是label值，返回的数据是找name
+        label: "name",
+        value: "name"
+      },
+      showTree: false, // 默认不显示树形结构
+      loading: false, // 控制加载转圈等待的显示
+      EmployeeEnum, // 在data中定义数据 用来循环员工的 聘用形式
       rules: {
+        // 表单的校验规则
         username: [
           { required: true, message: "姓名不能为空", trigger: "blur" },
-          { min: 2, max: 5, message: "用户姓名为2-5位", trigger: "blur" }
+          { min: 2, max: 5, message: "用户行为为2-5位", trigger: "blur" }
         ],
         mobile: [
           { required: true, message: "手机号不能为空", trigger: "blur" },
@@ -111,54 +130,49 @@ export default {
           { required: true, message: "入职时间不能为空", trigger: "blur" }
         ],
         correctionTime: [
-          { required: true, message: "转正时间不能为空", trigger: "blur" }
+          { required: true, message: "转正不能为空", trigger: "blur" }
         ]
-      },
-      treeData: [], // 用于存放转换好的树形结构
-      showTree: false, // 默认不显示树形组件
-      loading: false // 控制 打开部门时 加开卡顿,控制树的显示和隐藏进度条
+      }
     };
   },
-  created() {},
   methods: {
-    // 获取后台数据，并将扁平数组转换为树形结构
+    // 获取 组织架构中的 数据，并将数据转化为 树形数据 赋值给data中的tree 数组存放
     async getDepartments() {
       this.showTree = true;
       this.loading = true;
       const { depts } = await getDepartments();
+      console.log(depts);
+
       this.treeData = tranListToTreeDate(depts, "");
-      // console.log(this.treeData);
       this.loading = false;
     },
-    // 点击弹层中 部门时触发
-    // 当不清楚一个事件中有多少参数，是干嘛的 可以通过 arguments 打印出全部的参数
-    selectNode(node) {
-      this.formData.departmentName = node.name;
-      this.showTree = false;
+    // 获取到用户点击了树形数据中的值 ，并且赋值给表单中所对应的部门项目,然后关闭树形结构
+    // selectNode(node) {
+    //   this.formData.departmentName = node.name;
+    //   this.showTree = false;
+    // },
+    // 级联菜单的事件点击讲里面的值，赋值给表单中对应的值
+    handleChange(value) {
+      console.log(value);
+      // 将这个选中数组的最后一个值，当做我们所选中的
+      this.formData.departmentName = value[value.length - 1];
     },
-
-    // 弹窗中的确认按钮
-    async btnOk() {
+    // 点击确定后，讲表单中的值提交给接口
+    // 然后通知父组件重新渲染数据
+    async btnOK() {
       try {
-        // 利用refs 拿到表单 点击确定时 校验飙到
         await this.$refs.addEmployee.validate();
-        // 调用新增接口，传入表单中的数据
         await addEmployee(this.formData);
-        // this.$parent 表示 父组件中的实例，使用时是 子组件再父组件中 外层不能包含其他的标签
-        // 判断父组件是否存在这个方法，如果存在 就直接调用父组件中的方法 更新数据，渲染页面
-        this.$parent.getEmployeeList && this.$parent.getEmployeeList();
-        // 父组件中用了sync 修饰符，子组件可以直接通过update 修改属性
+        // $parent 可以拿到父组件的实例 但是有条件，用的不多
+        this.$parent.getEmployeeList();
         this.$emit("update:showDialog", false);
-        this.$message.success("添加数据成功");
-
-        // 这里不用重置数据 因为 关闭弹层触发了close事件
-        // close事件绑定了btnCancel方法
+        this.$message.success("新增员工成功");
+        // 这里的关闭弹层，会触发弹层的close事件， close事件会重置表单
       } catch (error) {
         console.log(error);
       }
     },
-
-    // 点击取消 关闭弹窗
+    // 点击取消，重置表单，移除验证规则，并且关闭弹层
     btnCancel() {
       this.formData = {
         username: "",
@@ -169,7 +183,7 @@ export default {
         timeOfEntry: "",
         correctionTime: ""
       };
-      this.$refs.addEmployee.resetFields(); // 关闭校验
+      this.$refs.addEmployee.resetFields(); // 重置校验结果
       this.$emit("update:showDialog", false);
     }
   }
