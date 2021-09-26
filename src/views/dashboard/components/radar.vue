@@ -4,7 +4,7 @@
 </template>
 
 <script>
-var echarts = require("echarts"); // 完成的引入
+// var echarts = require("echarts"); // 完整的引入
 
 // 按需引入
 var echarts = require("echarts/lib/echarts"); // 引入echarts主模块

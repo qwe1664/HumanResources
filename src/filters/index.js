@@ -152,6 +152,10 @@ export function getNowFormatDate() {
   var currentdate = year + seperator1 + month + seperator1 + strDate
   return currentdate
 }
+export function getInteger(){}
+export function getIntegerPoint(){}
+export function importFilexml(){}
+
 /* 数字 格式化 */
 export function nFormatter(num, digits) {
   const si = [{

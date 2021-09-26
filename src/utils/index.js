@@ -137,3 +137,6 @@ export function tranListToTreeDate(list, rootValue) {
   })
   return arr
 }
+
+
+export function transListToTreeData(){}
